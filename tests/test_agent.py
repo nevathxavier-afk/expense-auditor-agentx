@@ -10,9 +10,11 @@ sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")
 from agent.core import AgentExecutor, parse_json
 from agent.auditor import ExpenseAuditor
 from agent.budget import BudgetRebalancer
+from agent.similarity import generate_tx_hash, generate_vpa, SimilarityEngine
 from blockchain.ledger import BlockchainLedger
 from blockchain.merkle import MerkleTree
 from blockchain.pow import mine_block, verify_pow
+from blockchain.tamper_test import TamperTestingEnvironment
 from tools import build_tools
 
 
@@ -85,6 +87,34 @@ class AgentTests(unittest.TestCase):
         plan = rebalancer.generate_plan(50000)
         self.assertEqual(plan["status"], "OPTIMIZED")
         self.assertGreater(plan["projected_monthly_savings_inr"], 0)
+
+    def test_similarity_and_hashes(self):
+        h = generate_tx_hash("T1", "2024-01-01 10:00:00", "SBI", "HDFC", 500.0)
+        self.assertTrue(h.startswith("0x") and len(h) == 66)
+        vpa = generate_vpa("user", "MH_25", "SBI")
+        self.assertTrue("@sbi" in vpa)
+
+        sim = SimilarityEngine.compute_similarity(
+            {"amount": 500, "merchant_category": "Food", "sender_bank": "SBI", "receiver_bank": "HDFC", "transaction_type": "P2M"},
+            {"amount": 500, "merchant_category": "Food", "sender_bank": "SBI", "receiver_bank": "HDFC", "transaction_type": "P2M"}
+        )
+        self.assertEqual(sim, 1.0)
+
+    def test_tamper_environment_and_consensus(self):
+        env = TamperTestingEnvironment()
+        verify_clean = env.verify_with_consensus_telemetry()
+        self.assertTrue(verify_clean["is_valid"])
+
+        # Inject forgery in Block #1
+        env.inject_tamper(1, "prev_hash", "0xforged_hash_1234567890abcdef")
+        verify_tampered = env.verify_with_consensus_telemetry()
+        self.assertFalse(verify_tampered["is_valid"])
+        self.assertEqual(verify_tampered["verdict"], "TAMPER_DETECTED")
+
+        # Heal
+        env.reset_and_heal()
+        verify_healed = env.verify_with_consensus_telemetry()
+        self.assertTrue(verify_healed["is_valid"])
 
 
 if __name__ == "__main__":

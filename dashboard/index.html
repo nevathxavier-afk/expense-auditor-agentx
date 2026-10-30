@@ -9,8 +9,8 @@
   <style>
     :root {
       --bg: #090d16;
-      --card-bg: rgba(16, 24, 40, 0.75);
-      --card-border: rgba(99, 102, 241, 0.2);
+      --card-bg: rgba(16, 24, 40, 0.85);
+      --card-border: rgba(99, 102, 241, 0.22);
       --primary: #6366f1;
       --primary-hover: #4f46e5;
       --accent-green: #10b981;
@@ -22,7 +22,7 @@
     }
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body {
-      background: radial-gradient(circle at 10% 15%, rgba(49, 46, 129, 0.4) 0%, var(--bg) 85%);
+      background: radial-gradient(circle at 10% 15%, rgba(49, 46, 129, 0.45) 0%, var(--bg) 85%);
       color: var(--text);
       font-family: 'Outfit', sans-serif;
       min-height: 100vh;
@@ -35,6 +35,8 @@
       padding-bottom: 20px;
       border-bottom: 1px solid var(--card-border);
       margin-bottom: 24px;
+      flex-wrap: wrap;
+      gap: 16px;
     }
     .brand { display: flex; align-items: center; gap: 14px; }
     .badge {
@@ -49,7 +51,25 @@
     }
     h1 { font-size: 24px; font-weight: 700; }
     .mono { font-family: 'JetBrains Mono', monospace; }
-    
+
+    /* Actions Header */
+    .header-actions { display: flex; align-items: center; gap: 12px; }
+    .btn-vercel {
+      background: #000;
+      color: #fff;
+      border: 1px solid rgba(255,255,255,0.25);
+      padding: 8px 14px;
+      border-radius: 8px;
+      font-size: 12px;
+      font-weight: 600;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.2s;
+    }
+    .btn-vercel:hover { border-color: #fff; transform: translateY(-1px); }
+
     /* Navigation Tabs */
     .tabs {
       display: flex;
@@ -57,6 +77,7 @@
       margin-bottom: 24px;
       border-bottom: 1px solid rgba(255,255,255,0.08);
       padding-bottom: 12px;
+      overflow-x: auto;
     }
     .tab-btn {
       background: transparent;
@@ -69,14 +90,16 @@
       border-radius: 8px;
       cursor: pointer;
       transition: all 0.2s;
+      white-space: nowrap;
     }
     .tab-btn:hover { color: #fff; background: rgba(255,255,255,0.05); }
     .tab-btn.active { color: #fff; background: rgba(99, 102, 241, 0.2); border: 1px solid var(--primary); }
-    
-    /* Layout */
+
     .tab-content { display: none; }
-    .tab-content.active { display: block; }
-    
+    .tab-content.active { display: block; animation: fadeIn 0.3s ease-in-out; }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: translateY(0); } }
+
+    /* Grid & Cards */
     .grid {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
@@ -100,34 +123,37 @@
     .metric-title { font-size: 12px; color: var(--text-muted); text-transform: uppercase; margin-bottom: 6px; font-weight: 600; }
     .metric-value { font-size: 30px; font-weight: 700; color: #fff; }
     .metric-sub { font-size: 12px; margin-top: 6px; }
-    
+
     .btn {
       background: var(--primary);
       color: #fff;
       border: none;
-      padding: 10px 18px;
+      padding: 9px 16px;
       border-radius: 8px;
       font-weight: 600;
       cursor: pointer;
       font-family: 'Outfit', sans-serif;
       transition: all 0.2s;
+      font-size: 13px;
     }
-    .btn:hover { background: var(--primary-hover); }
+    .btn:hover { background: var(--primary-hover); transform: translateY(-1px); }
+    .btn-secondary { background: rgba(255,255,255,0.08); border: 1px solid var(--card-border); color: var(--text); }
+    .btn-secondary:hover { background: rgba(255,255,255,0.15); }
     .btn-danger { background: var(--accent-red); }
     .btn-danger:hover { background: #dc2626; }
     .btn-success { background: var(--accent-green); }
     .btn-success:hover { background: #059669; }
-    
+
     table { width: 100%; border-collapse: collapse; margin-top: 14px; font-size: 13px; }
-    th, td { text-align: left; padding: 10px 12px; border-bottom: 1px solid rgba(255,255,255,0.06); }
+    th, td { text-align: left; padding: 11px 12px; border-bottom: 1px solid rgba(255,255,255,0.06); }
     th { color: var(--text-muted); font-weight: 600; text-transform: uppercase; font-size: 11px; }
-    
-    .tag { padding: 3px 8px; border-radius: 6px; font-size: 11px; font-weight: 600; }
+
+    .tag { padding: 3px 8px; border-radius: 6px; font-size: 11px; font-weight: 600; display: inline-block; }
     .tag-dup { background: rgba(239, 68, 68, 0.15); color: #fca5a5; border: 1px solid rgba(239, 68, 68, 0.3); }
     .tag-creep { background: rgba(245, 158, 11, 0.15); color: #fcd34d; border: 1px solid rgba(245, 158, 11, 0.3); }
     .tag-surge { background: rgba(6, 182, 212, 0.15); color: #67e8f9; border: 1px solid rgba(6, 182, 212, 0.3); }
     .tag-fraud { background: rgba(220, 38, 38, 0.25); color: #fecaca; border: 1px solid var(--accent-red); }
-    
+
     .hash-chip {
       background: rgba(99, 102, 241, 0.12);
       border: 1px solid rgba(99, 102, 241, 0.3);
@@ -137,6 +163,7 @@
       font-size: 12px;
       word-break: break-all;
     }
+
     .log-box {
       background: #050811;
       border: 1px solid rgba(255,255,255,0.1);
@@ -152,8 +179,30 @@
     .log-success { color: var(--accent-green); }
     .log-warn { color: var(--accent-amber); }
     .log-crit { color: var(--accent-red); font-weight: 700; }
-    
+
     .theme-progress { display: flex; height: 18px; border-radius: 6px; overflow: hidden; margin-top: 10px; }
+
+    /* Modal / Drawer */
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      top: 0; left: 0; width: 100%; height: 100%;
+      background: rgba(0,0,0,0.75);
+      backdrop-filter: blur(6px);
+      z-index: 1000;
+      justify-content: center;
+      align-items: center;
+    }
+    .modal-overlay.active { display: flex; }
+    .modal-card {
+      background: #111827;
+      border: 1px solid var(--primary);
+      border-radius: 16px;
+      width: 90%;
+      max-width: 580px;
+      padding: 24px;
+      box-shadow: 0 20px 40px rgba(0,0,0,0.5);
+    }
   </style>
 </head>
 <body>
@@ -162,10 +211,16 @@
       <span class="badge">AgentX 2026</span>
       <h1>Expense Auditor & Anomaly Hunter Studio</h1>
     </div>
-    <div style="display:flex; align-items:center; gap:16px;">
+    <div class="header-actions">
+      <a href="https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2Fnevathxavier-afk%2Fexpense-auditor-agentx" target="_blank" class="btn-vercel">
+        ▲ Deploy with Vercel
+      </a>
+      <a href="https://colab.research.google.com/github/nevathxavier-afk/expense-auditor-agentx/blob/main/notebooks/agentx_colab.ipynb" target="_blank" class="btn btn-secondary">
+        ⚡ Open in Colab
+      </a>
       <div style="font-size: 13px; color: var(--accent-green); display: flex; align-items: center; gap: 8px;">
         <span style="display:inline-block; width:8px; height:8px; border-radius:50%; background:var(--accent-green); box-shadow:0 0 10px var(--accent-green);"></span>
-        SHA-256 Ledger Intact
+        SHA-256 Ledger Verified
       </div>
     </div>
   </header>
@@ -213,7 +268,7 @@
           <div style="width: 12%; background: #8b5cf6;" title="Future Growth & Education (12%)"></div>
           <div style="width: 8%; background: #f59e0b;" title="Transit & Commute (8%)"></div>
         </div>
-        <div style="display:flex; justify-content:space-between; margin-top: 14px; font-size: 12px; color: var(--text-muted);">
+        <div style="display:flex; justify-content:space-between; margin-top: 14px; font-size: 12px; color: var(--text-muted); flex-wrap:wrap; gap:8px;">
           <span>🔵 Essential Survival: <strong>₹ 15.69 Cr</strong></span>
           <span>🌸 Lifestyle & Wants: <strong>₹ 10.50 Cr</strong></span>
           <span>🟣 Growth & Ed: <strong>₹ 3.87 Cr</strong></span>
@@ -230,6 +285,7 @@
             <tr><td>Grocery</td><td class="mono">49,966</td><td class="mono">₹ 5.83 Cr</td><td>17.8%</td></tr>
             <tr><td>Utilities</td><td class="mono">22,338</td><td class="mono">₹ 5.27 Cr</td><td>16.1%</td></tr>
             <tr><td>Fuel</td><td class="mono">25,063</td><td class="mono">₹ 3.90 Cr</td><td>11.9%</td></tr>
+            <tr><td>Education</td><td class="mono">7,598</td><td class="mono">₹ 3.87 Cr</td><td>11.8%</td></tr>
             <tr><td>Food & Dining</td><td class="mono">37,464</td><td class="mono">₹ 1.99 Cr</td><td>6.1%</td></tr>
           </tbody>
         </table>
@@ -262,9 +318,15 @@
   <!-- TAB 2: ANOMALIES -->
   <div id="tab-anomalies" class="tab-content">
     <div class="card">
-      <div style="display:flex; justify-content:space-between; align-items:center;">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 14px;">
         <h2 style="font-size: 18px;">Cognitive Anomaly Hunter & Reasoning Engine</h2>
-        <div style="font-size: 12px; color: var(--text-muted);">Hunted over 250,000 transactions</div>
+        <div style="display:flex; gap:8px;">
+          <button class="btn btn-secondary" onclick="filterAnomalies('ALL')">All</button>
+          <button class="btn btn-secondary" onclick="filterAnomalies('DUP')">Duplicates</button>
+          <button class="btn btn-secondary" onclick="filterAnomalies('CREEP')">Creep</button>
+          <button class="btn btn-secondary" onclick="filterAnomalies('SURGE')">Surges</button>
+          <button class="btn btn-secondary" onclick="filterAnomalies('FRAUD')">Fraud</button>
+        </div>
       </div>
       <table>
         <thead>
@@ -273,56 +335,59 @@
             <th>Category</th>
             <th>Amount</th>
             <th>TxHash</th>
-            <th>Auditor Cognitive Reasoning</th>
+            <th>Cognitive Reasoning & Risk Factor</th>
             <th>Severity</th>
+            <th>Action</th>
           </tr>
         </thead>
-        <tbody>
-          <tr>
+        <tbody id="anomalyList">
+          <tr data-type="DUP">
             <td><span class="tag tag-dup">DUPLICATE</span></td>
             <td>Food & Dining</td>
             <td class="mono">₹ 868.00</td>
             <td><span class="hash-chip mono">0x3f1e...4b82</span></td>
-            <td>Double charge to Axis/SBI within 4.2 mins. User double-click during network retry. Initiate UPI reversal claim.</td>
+            <td>Double charge to Axis/SBI within 4.2 mins. User double-click during network retry.</td>
             <td><strong class="text-red">HIGH (85)</strong></td>
+            <td><button class="btn btn-secondary" style="padding:4px 8px; font-size:11px;" onclick="viewExplain('Double Charge Reversal', '₹ 868.00 paid twice in 4.2 minutes to Food merchant.', 'Immediate UPI Chargeback Request', 85)">Explain</button></td>
           </tr>
-          <tr>
+          <tr data-type="CREEP">
             <td><span class="tag tag-creep">CREEP</span></td>
             <td>Entertainment</td>
             <td class="mono">₹ 1,199.00</td>
             <td><span class="hash-chip mono">0x9d4a...110c</span></td>
             <td>Recurring monthly autopay jumped from ₹999 to ₹1,199 (+20.0% hike in 30 days). Unannounced subscription tier creep.</td>
             <td><strong class="text-amber">MEDIUM (65)</strong></td>
+            <td><button class="btn btn-secondary" style="padding:4px 8px; font-size:11px;" onclick="viewExplain('Subscription Price Hike', 'Recurring monthly debit jumped from ₹999 to ₹1,199 (+20%).', 'Cancel or Downgrade Plan Mandate', 65)">Explain</button></td>
           </tr>
-          <tr>
+          <tr data-type="SURGE">
             <td><span class="tag tag-surge">SURGE</span></td>
             <td>Shopping</td>
             <td class="mono">₹ 14,850.00</td>
             <td><span class="hash-chip mono">0x7c2b...84ea</span></td>
             <td>Discretionary spend surge: ₹14,850 is 3.1σ above normal category average (₹2,573). Threatens monthly discretionary allocation.</td>
             <td><strong class="text-cyan">HIGH (91)</strong></td>
+            <td><button class="btn btn-secondary" style="padding:4px 8px; font-size:11px;" onclick="viewExplain('Discretionary Spend Surge', 'Spend exceeds rolling 30-day moving average by 3.1 sigma.', 'Enforce Transaction Cap of ₹5,000', 91)">Explain</button></td>
           </tr>
-          <tr>
+          <tr data-type="FRAUD">
             <td><span class="tag tag-fraud">FRAUD ALERT</span></td>
             <td>Utilities</td>
             <td class="mono">₹ 4,320.00</td>
             <td><span class="hash-chip mono">0x1a8f...92bb</span></td>
             <td>CRITICAL: Transaction flagged by bank network fraud monitoring. High risk of compromised UPI device token.</td>
             <td><strong class="text-red">CRITICAL (98)</strong></td>
+            <td><button class="btn btn-secondary" style="padding:4px 8px; font-size:11px;" onclick="viewExplain('Bank Network Fraud Flag', 'Network security heuristics flagged this transaction token as unauthorized.', 'Immediate UPI PIN Reset and Hotline Report', 98)">Explain</button></td>
           </tr>
         </tbody>
       </table>
     </div>
   </div>
 
-  <!-- TAB 3: TRANSACTION EXPLORER & HASHES -->
+  <!-- TAB 3: EXPLORER -->
   <div id="tab-explorer" class="tab-content">
     <div class="card">
       <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 14px;">
         <h2 style="font-size: 18px;">Blockchain Transaction Explorer</h2>
-        <div style="display:flex; gap: 8px;">
-          <input type="text" id="searchInput" placeholder="Search by TxID or Category..." style="background:rgba(255,255,255,0.06); border:1px solid var(--card-border); color:#fff; padding:6px 12px; border-radius:6px; font-size:13px;" onkeyup="filterExplorer()">
-        </div>
+        <input type="text" id="searchInput" placeholder="Search by TxID, Category, or Bank..." style="background:rgba(255,255,255,0.06); border:1px solid var(--card-border); color:#fff; padding:6px 12px; border-radius:6px; font-size:13px; width:280px;" onkeyup="filterExplorer()">
       </div>
       <table id="explorerTable">
         <thead>
@@ -364,18 +429,36 @@
             <td class="mono">₹ 477.00</td>
             <td><span class="text-green">CONFIRMED</span></td>
           </tr>
+          <tr>
+            <td class="mono">TXN0000000004</td>
+            <td><span class="hash-chip mono">0x11be98...f420</span></td>
+            <td class="mono">user_del_32@icici</td>
+            <td class="mono">merchant_fuel@pnb</td>
+            <td>Fuel</td>
+            <td class="mono">₹ 2,784.00</td>
+            <td><span class="text-green">CONFIRMED</span></td>
+          </tr>
+          <tr>
+            <td class="mono">TXN0000000005</td>
+            <td><span class="hash-chip mono">0x62cf10...e109</span></td>
+            <td class="mono">user_del_28@axis</td>
+            <td class="mono">merchant_shopping@yesbank</td>
+            <td>Shopping</td>
+            <td class="mono">₹ 990.00</td>
+            <td><span class="text-green">CONFIRMED</span></td>
+          </tr>
         </tbody>
       </table>
     </div>
   </div>
 
-  <!-- TAB 4: TAMPER TESTING ARENA -->
+  <!-- TAB 4: TAMPER ARENA -->
   <div id="tab-tamper" class="tab-content">
     <div style="display:grid; grid-template-columns: 1fr 1fr; gap: 20px;">
       <div class="card">
-        <h2 style="font-size: 18px; margin-bottom: 12px;">🚨 Tamper Injection Sandbox</h2>
+        <h2 style="font-size: 18px; margin-bottom: 12px;">🚨 Tamper Testing Arena & Sandbox</h2>
         <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 16px;">
-          Simulate an adversarial attempt to mutate an audited block. Observe how the Merkle Tree, Proof-of-Work nonces, and 3 validator consensus nodes detect the forgery immediately.
+          Simulate an adversarial attempt to forge audited records. Watch the Merkle Tree break, Proof-of-Work nonces invalidate, and multi-node consensus abort in real time.
         </p>
 
         <div style="background:rgba(255,255,255,0.04); padding:16px; border-radius:10px; margin-bottom:16px;">
@@ -384,7 +467,7 @@
           <div style="font-size: 13px;"><strong>Adversary Action:</strong> Inject fraudulent spend value: <span class="mono text-red">₹ 86,800.00</span></div>
         </div>
 
-        <div style="display:flex; gap:10px;">
+        <div style="display:flex; gap:10px; flex-wrap:wrap;">
           <button class="btn btn-danger" onclick="injectTamper()">🚨 Inject Malicious Tamper</button>
           <button class="btn btn-secondary" onclick="runConsensusCheck()">⚡ Verify Consensus</button>
           <button class="btn btn-success" onclick="healLedger()">🛠️ Self-Heal Ledger</button>
@@ -420,7 +503,7 @@
           <label style="font-size: 13px; color: var(--text-muted); display:block; margin-bottom:8px;">
             Monthly Take-Home Income: <strong id="incomeDisplay" class="mono text-green" style="font-size: 18px;">₹ 65,000</strong>
           </label>
-          <input type="range" id="incomeSlider" min="25000" max="300000" step="5000" value="65000" style="width:100%;" oninput="updateBudget(this.value)">
+          <input type="range" id="incomeSlider" min="25000" max="300000" step="5000" value="65000" style="width:100%; accent-color:var(--primary);" oninput="updateBudget(this.value)">
         </div>
 
         <div class="theme-progress" style="height: 24px; margin-bottom: 14px;">
@@ -455,11 +538,32 @@
           <div style="font-size: 12px; color: var(--text-muted); margin-top:4px;">Compound impact assuming 8.0% CAGR with anomaly leakage plugged.</div>
         </div>
 
-        <div style="font-size: 13px; line-height: 1.8;">
+        <div style="font-size: 13px; line-height: 1.8; margin-bottom: 18px;">
           <div>✅ <strong>Leakage Cut:</strong> ₹ 14,850/mo saved from stopped double charges & creeping subscriptions.</div>
           <div>✅ <strong>Emergency Fund:</strong> 6 months of expenses (₹ 1.95L) secured within 14 months.</div>
           <div>✅ <strong>Discretionary Throttling:</strong> Hard spend limits enforce zero impulse leakage.</div>
         </div>
+
+        <button class="btn btn-secondary" style="width:100%;" onclick="downloadCertificate()">📜 Download Cryptographic Audit Certificate (JSON)</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Explainability Modal -->
+  <div class="modal-overlay" id="explainModal" onclick="closeExplain()">
+    <div class="modal-card" onclick="event.stopPropagation()">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:14px;">
+        <h3 id="modalTitle" style="font-size:18px;">Cognitive Audit Reasoning</h3>
+        <button class="btn btn-secondary" style="padding:4px 8px;" onclick="closeExplain()">✕</button>
+      </div>
+      <div style="font-size:13px; color:var(--text-muted); margin-bottom:12px;" id="modalDesc"></div>
+      <div style="background:rgba(255,255,255,0.04); padding:12px; border-radius:8px; margin-bottom:14px;">
+        <div style="font-size:12px; color:var(--text-muted);">RECOMMENDED REMEDIATION ACTION</div>
+        <div style="font-size:14px; color:var(--accent-green); font-weight:600; margin-top:4px;" id="modalAction"></div>
+      </div>
+      <div style="display:flex; justify-content:space-between; align-items:center;">
+        <span style="font-size:12px; color:var(--text-muted);">Auditor Risk Score: <strong id="modalRisk" class="mono text-red">85/100</strong></span>
+        <button class="btn" onclick="closeExplain()">Dismiss Finding</button>
       </div>
     </div>
   </div>
@@ -504,7 +608,7 @@
         document.getElementById('defenseStatusText').innerText = '⚠️ TAMPER DETECTED IN BLOCK #1';
         document.getElementById('defenseStatusText').className = 'text-red';
       }).catch(err => {
-        addLog('ADVERSARY: Injected fraudulent transaction into Block #1 in local state.', 'log-crit');
+        addLog('ADVERSARY: Injected fraudulent transaction (₹86,800.00) into Block #1 in memory!', 'log-crit');
         document.getElementById('defenseStatusText').innerText = '⚠️ TAMPER DETECTED IN BLOCK #1';
         document.getElementById('defenseStatusText').className = 'text-red';
       });
@@ -521,8 +625,16 @@
           });
         }
       }).catch(err => {
-        addLog('NODE_GAMMA: ALERT: Proof-of-Work failure at Block #1! Nonce mismatch.', 'log-crit');
-        addLog('CONSENSUS: Multi-node verification failed: FORGERY DETECTED.', 'log-crit');
+        const isTampered = document.getElementById('defenseStatusText').innerText.includes('TAMPER');
+        if (isTampered) {
+          addLog('NODE_BETA: CRITICAL: Merkle Root mismatch at Block #1! Hash does not match transactions leaves.', 'log-crit');
+          addLog('NODE_GAMMA: CRITICAL: Proof-of-Work failure at Block #1! Target 000... violated.', 'log-crit');
+          addLog('CONSENSUS: Multi-node verification failed: FORGERY DETECTED.', 'log-crit');
+        } else {
+          addLog('NODE_BETA: Block #1 Merkle Root verified: d6a7ea8ded880f7c...', 'log-success');
+          addLog('NODE_GAMMA: Block #1 Proof-of-Work Target 000... satisfied (Nonce 2587).', 'log-success');
+          addLog('CONSENSUS: All 3 validator nodes confirmed: LEDGER IS IMMUTABLE.', 'log-success');
+        }
       });
     }
 
@@ -544,6 +656,49 @@
       document.querySelectorAll('#explorerRows tr').forEach(row => {
         row.style.display = row.innerText.toLowerCase().includes(q) ? '' : 'none';
       });
+    }
+
+    function filterAnomalies(type) {
+      document.querySelectorAll('#anomalyList tr').forEach(row => {
+        if (type === 'ALL' || row.getAttribute('data-type') === type) {
+          row.style.display = '';
+        } else {
+          row.style.display = 'none';
+        }
+      });
+    }
+
+    function viewExplain(title, desc, action, risk) {
+      document.getElementById('modalTitle').innerText = title;
+      document.getElementById('modalDesc').innerText = desc;
+      document.getElementById('modalAction').innerText = action;
+      document.getElementById('modalRisk').innerText = risk + '/100';
+      document.getElementById('explainModal').classList.add('active');
+    }
+
+    function closeExplain() {
+      document.getElementById('explainModal').classList.remove('active');
+    }
+
+    function downloadCertificate() {
+      const cert = {
+        certificate_id: "CERT-AGX-001-9F42B",
+        timestamp: new Date().toISOString(),
+        audited_transactions_count: 250000,
+        spend_volume_inr: 327939009.0,
+        merkle_root: "7a3f8902cde15b4982631029471bcefa45829104728910482910384729103847",
+        mined_block_hash: "0004a89e4726bf0198cda67b3901f4c71829047b6a1893c56182903748261902",
+        pow_difficulty: 3,
+        validator_consensus: "3/3 AUDITOR NODES AGREED (Alpha, Beta, Gamma)",
+        tamper_status: "VERIFIED_ON_CHAIN"
+      };
+      const blob = new Blob([JSON.stringify(cert, null, 2)], {type: 'application/json'});
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = "audit_certificate_CERT-AGX-001.json";
+      a.click();
+      URL.revokeObjectURL(url);
     }
   </script>
 </body>

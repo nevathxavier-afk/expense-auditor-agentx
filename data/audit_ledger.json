@@ -1,0 +1,91 @@
+{
+  "version": "1.0",
+  "difficulty": 3,
+  "chain_length": 2,
+  "last_updated": 1793342058.5438113,
+  "chain": [
+    {
+      "index": 0,
+      "timestamp": 1793342058.5281427,
+      "datetime": "2026-10-30 06:34:18 UTC",
+      "transactions_count": 0,
+      "merkle_root": "309376f4811db55f7b6667e89d6756174cc5ba6ce0818b8092abe64704fa9687",
+      "audit_summary": {
+        "status": "INITIALIZED",
+        "message": "AgentX Financial Auditor & Anomaly Hunter Genesis Ledger",
+        "protocol": "PoW-SHA256-Merkle-Audit-v1.0"
+      },
+      "rebalanced_budget": {
+        "status": "INITIALIZED"
+      },
+      "zk_proofs": [],
+      "prev_hash": "0000000000000000000000000000000000000000000000000000000000000000",
+      "nonce": 2528,
+      "hash": "000d494e68020cf77211d5d0029405881d124a6ab985cbad1bcf7c9bd7a4e477",
+      "mining_stats": {
+        "nonce": 2528,
+        "hash": "000d494e68020cf77211d5d0029405881d124a6ab985cbad1bcf7c9bd7a4e477",
+        "timestamp": 1793342058.5281427,
+        "duration_seconds": 0.0157,
+        "hash_count": 2529,
+        "hash_rate_hps": 161341,
+        "difficulty": 3,
+        "target_prefix": "000"
+      },
+      "validator_signatures": [
+        "NODE_GENESIS_SIG_3ec50ddc46086638"
+      ]
+    },
+    {
+      "index": 1,
+      "timestamp": 1793342058.5438113,
+      "datetime": "2026-10-30 06:34:18 UTC",
+      "transactions_count": 500,
+      "merkle_root": "d6a7ea8ded880f7cc28853f97c414b3fa2e9f1e0fc48a22bec517392a0cd1eb6",
+      "audit_summary": {
+        "anomalies_count": 12,
+        "duplicates_count": 3,
+        "subscription_creep_count": 2,
+        "spend_surges_count": 7,
+        "anomalies": [
+          {
+            "type": "DUPLICATE_PAYMENT",
+            "amount": 868.0,
+            "category": "Food"
+          }
+        ]
+      },
+      "rebalanced_budget": {
+        "projected_monthly_savings_inr": 14850.0,
+        "status": "OPTIMIZED"
+      },
+      "zk_proofs": [
+        {
+          "commitment_hash": "8237637fb9e4931d01fad201ebe9670e60e952563edec645921641c1d2d60d2d",
+          "salt": "ae02c00fa2de89cfb5a5320766ac4755",
+          "masked_id": "TXN...XN_1",
+          "category": "Food",
+          "amount_range": "INR 500 - 2,000 (Standard expense)"
+        }
+      ],
+      "prev_hash": "000d494e68020cf77211d5d0029405881d124a6ab985cbad1bcf7c9bd7a4e477",
+      "nonce": 2587,
+      "hash": "000015823c625e3d0bbca37415ef0697b3639f098fee1216710817f3ccc7f983",
+      "mining_stats": {
+        "nonce": 2587,
+        "hash": "000015823c625e3d0bbca37415ef0697b3639f098fee1216710817f3ccc7f983",
+        "timestamp": 1793342058.5438113,
+        "duration_seconds": 0.001,
+        "hash_count": 2588,
+        "hash_rate_hps": 2587000,
+        "difficulty": 3,
+        "target_prefix": "000"
+      },
+      "validator_signatures": [
+        "VALIDATOR_NODE_ALPHA_SIG:27994e554e05ce5c",
+        "VALIDATOR_NODE_BETA_SIG:cbc4fb144141d2f2",
+        "VALIDATOR_NODE_GAMMA_SIG:3bfff37ae12728ca"
+      ]
+    }
+  ]
+}

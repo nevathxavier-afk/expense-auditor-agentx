@@ -23,7 +23,7 @@ class ListFiles(Tool):
     args_doc = "{}"
 
     def execute(self):
-        files = sorted(f for f in os.listdir(config.DATA_DIR) if not f.startswith(".") and f != "queries.json")
+        files = sorted(f for f in os.listdir(config.DATA_DIR) if not f.startswith(".") and f != "queries.json" and not f.endswith(".db"))
         return ", ".join(files) or "ERROR: no data files found"
 
 
@@ -49,6 +49,27 @@ class SqlQuery(Tool):
     def execute(self, filename, sql):
         if not re.match(r"^\s*select\b", sql, re.I) or ";" in sql.strip().rstrip(";"):
             raise ValueError("only a single SELECT statement is allowed")
+
+        # Fast path for large 250k pre-indexed database
+        db_path = os.path.join(config.DATA_DIR, "transactions.db")
+        if filename in ["upi_transactions_2024.csv", "transactions.csv", "transactions.db"]:
+            if not os.path.exists(db_path):
+                try:
+                    from data.indexer import build_index
+                    build_index()
+                except Exception:
+                    pass
+            if os.path.exists(db_path):
+                db = sqlite3.connect(db_path)
+                try:
+                    adapted_sql = re.sub(r"\bdata\b", "transactions", sql, flags=re.I)
+                    cur = db.execute(adapted_sql.strip().rstrip(";"))
+                    cols = [c[0] for c in cur.description]
+                    return json.dumps({"columns": cols, "rows": cur.fetchmany(50)}, default=str)
+                finally:
+                    db.close()
+
+        # In-memory CSV loader for test suites and dynamic files
         with open(_path(filename), encoding="utf-8", errors="ignore") as f:
             rows = list(csv.reader(io.StringIO(f.read())))
         if len(rows) < 2:

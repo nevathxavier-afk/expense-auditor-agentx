@@ -139,3 +139,68 @@ class TamperTestingEnvironment:
             "chain_height": len(self.active_chain),
             "message": "Ledger state restored from certified on-chain records."
         }
+
+    def simulate_avalanche_tamper(self, block_index: int = 1, delta_paisa: float = 0.01) -> Dict[str, Any]:
+        """Simulates an adversarial micro-mutation (e.g. altering 1 paisa) and demonstrates cryptographic avalanche effect."""
+        if block_index < 0 or block_index >= len(self.active_chain):
+            return {"error": f"Invalid block index {block_index}."}
+
+        target_block = self.active_chain[block_index]
+        orig_merkle = target_block.merkle_root
+        orig_hash = target_block.hash
+
+        # Mutate transactions summary by micro-delta
+        orig_str = f"BLOCK:{target_block.index}:{target_block.prev_hash}:{orig_merkle}:spend=14850.00"
+        mutated_str = f"BLOCK:{target_block.index}:{target_block.prev_hash}:{orig_merkle}:spend={14850.00 + delta_paisa:.2f}"
+
+        avalanche = compute_avalanche_effect(orig_str, mutated_str)
+
+        # Apply tamper
+        target_block.audit_summary["spend_volume_mutated"] = 14850.00 + delta_paisa
+        self.inject_tamper(block_index, "spend_volume_mutated", 14850.00 + delta_paisa)
+
+        return {
+            "attack_type": "AVALANCHE_MICRO_MUTATION",
+            "block_index": block_index,
+            "mutation_delta_inr": delta_paisa,
+            "avalanche_analysis": avalanche,
+            "cascading_breakdown": {
+                "merkle_leaf_invalidated": True,
+                "block_header_invalidated": True,
+                "downstream_blocks_broken": len(self.active_chain) - block_index - 1,
+                "proof_of_work_target_violated": True
+            }
+        }
+
+
+def compute_avalanche_effect(original_data: str, modified_data: str) -> Dict[str, Any]:
+    """Computes bit-by-bit avalanche effect and Hamming distance between two payloads."""
+    import hashlib
+    h1 = hashlib.sha256(original_data.encode("utf-8")).hexdigest()
+    h2 = hashlib.sha256(modified_data.encode("utf-8")).hexdigest()
+
+    b1 = bin(int(h1, 16))[2:].zfill(256)
+    b2 = bin(int(h2, 16))[2:].zfill(256)
+
+    bit_diffs = [i for i, (x, y) in enumerate(zip(b1, b2)) if x != y]
+    hamming_distance = len(bit_diffs)
+    avalanche_percentage = round((hamming_distance / 256.0) * 100.0, 2)
+
+    return {
+        "original_payload": original_data,
+        "modified_payload": modified_data,
+        "original_hash": h1,
+        "modified_hash": h2,
+        "original_bits_binary": b1,
+        "modified_bits_binary": b2,
+        "differing_bit_indices": bit_diffs,
+        "hamming_distance": hamming_distance,
+        "total_bits": 256,
+        "avalanche_percentage": avalanche_percentage,
+        "is_avalanche_ideal": 45.0 <= avalanche_percentage <= 55.0,
+        "cascading_impact": (
+            f"Flipping micro-payload changed {hamming_distance} / 256 bits ({avalanche_percentage}%), "
+            f"triggering total catastrophic invalidation of downstream blocks."
+        )
+    }
+

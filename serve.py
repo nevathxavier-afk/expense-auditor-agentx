@@ -54,7 +54,13 @@ class FinTechAPIHandler(http.server.SimpleHTTPRequestHandler):
         length = int(self.headers.get("Content-Length", 0))
         body = json.loads(self.rfile.read(length)) if length > 0 else {}
 
-        if parsed.path == "/api/tamper/simulate":
+        if parsed.path == "/api/tamper/avalanche":
+            orig = str(body.get("original", "TXN001:amount=14850.00:user=user_del_25@axis"))
+            mut = str(body.get("mutated", "TXN001:amount=14850.01:user=user_del_25@axis"))
+            from blockchain.tamper_test import compute_avalanche_effect
+            res = compute_avalanche_effect(orig, mut)
+            self._send_json(res)
+        elif parsed.path == "/api/tamper/simulate":
             block_idx = int(body.get("block_index", 1))
             field = str(body.get("field", "amount"))
             forged_val = body.get("value", 86800.0)

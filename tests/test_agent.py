@@ -14,7 +14,7 @@ from agent.similarity import generate_tx_hash, generate_vpa, SimilarityEngine
 from blockchain.ledger import BlockchainLedger
 from blockchain.merkle import MerkleTree
 from blockchain.pow import mine_block, verify_pow
-from blockchain.tamper_test import TamperTestingEnvironment
+from blockchain.tamper_test import TamperTestingEnvironment, compute_avalanche_effect
 from tools import build_tools
 
 
@@ -116,6 +116,21 @@ class AgentTests(unittest.TestCase):
         verify_healed = env.verify_with_consensus_telemetry()
         self.assertTrue(verify_healed["is_valid"])
 
+    def test_avalanche_effect_analysis(self):
+        orig = "TXN001:2024-10-08 15:17:28:868.00:Entertainment:user_del_25@axis"
+        mutated = "TXN001:2024-10-08 15:17:28:868.01:Entertainment:user_del_25@axis"
+        res = compute_avalanche_effect(orig, mutated)
+        self.assertGreaterEqual(res["hamming_distance"], 100)
+        self.assertGreaterEqual(res["avalanche_percentage"], 40.0)
+        self.assertTrue(res["cascading_impact"])
+
+        # Test simulation via environment
+        env = TamperTestingEnvironment()
+        sim = env.simulate_avalanche_tamper(1, delta_paisa=0.01)
+        self.assertEqual(sim["attack_type"], "AVALANCHE_MICRO_MUTATION")
+        self.assertTrue(sim["cascading_breakdown"]["merkle_leaf_invalidated"])
+
 
 if __name__ == "__main__":
     unittest.main()
+

@@ -122,7 +122,25 @@ class handler(BaseHTTPRequestHandler):
         length = int(self.headers.get("Content-Length", 0))
         body = json.loads(self.rfile.read(length)) if length > 0 else {}
 
-        if parsed.path.endswith("/tamper/simulate"):
+        if parsed.path.endswith("/tamper/avalanche"):
+            import hashlib
+            orig = str(body.get("original", "TXN001:amount=14850.00:user=user_del_25@axis"))
+            mut = str(body.get("mutated", "TXN001:amount=14850.01:user=user_del_25@axis"))
+            h1 = hashlib.sha256(orig.encode("utf-8")).hexdigest()
+            h2 = hashlib.sha256(mut.encode("utf-8")).hexdigest()
+            b1 = bin(int(h1, 16))[2:].zfill(256)
+            b2 = bin(int(h2, 16))[2:].zfill(256)
+            diffs = [i for i, (x, y) in enumerate(zip(b1, b2)) if x != y]
+            pct = round((len(diffs) / 256.0) * 100.0, 2)
+            self._send_json({
+                "original_hash": h1,
+                "mutated_hash": h2,
+                "hamming_distance": len(diffs),
+                "avalanche_percentage": pct,
+                "differing_bits": diffs,
+                "is_ideal": 45.0 <= pct <= 55.0
+            })
+        elif parsed.path.endswith("/tamper/simulate"):
             TAMPER_STATE["is_tampered"] = True
             TAMPER_STATE["tampered_block"] = int(body.get("block_index", 1))
             TAMPER_STATE["forged_value"] = body.get("value", 86800.0)

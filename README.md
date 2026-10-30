@@ -33,11 +33,11 @@ Autonomous Finance & Risk agent built for the **AgentX Challenge 2026** (SRMIST 
 5. **Live In-Browser Proof-of-Work (PoW) Mining Station**:
    - Configurable mining difficulty slider (Difficulty 1 to 4: `0...` to `0000...`).
    - Live browser-based WebCrypto SHA-256 mining rig computing real nonces, displaying kH/s hashrate, time elapsed, and dynamically appending mined blocks to the live blockchain.
-6. **Adversarial Tamper Testing Arena & Multi-Node Consensus Sandbox**:
-   - Adversary simulator injecting fraudulent amounts (e.g. ₹14,850 $\rightarrow$ ₹86,800) into audited blocks.
-   - 3 independent validator nodes (**Node Alpha: Fraud Heuristics**, **Node Beta: Merkle Tree Cryptographer**, **Node Gamma: PoW Nonce Validator**).
-   - Streaming terminal telemetry showing consensus rejection of tampering.
-   - One-click cryptographic self-healing restoring certified on-chain records.
+6. **Cryptographic Avalanche Tamperproof Testing Arena & Cascading Domino Simulator**:
+   - **Strict Avalanche Criterion (SAC) Analysis**: Proves that modifying 1 bit or 1 paisa (₹0.01) triggers a catastrophic **~50% bit flip (Hamming distance ~128/256 bits)** across the SHA-256 block header.
+   - **Interactive 256-Bit Binary Diffusion Matrix**: Visualizes all 256 SHA-256 bits in real time, highlighting flipped bits in red and matching bits in green.
+   - **Cascading Blockchain Invalidation Domino Effect**: Shows how tampering with a single leaf invalidates the Merkle Root, breaks the PoW nonce (target `000...`), breaks the `prev_hash` link of Block #2, and orphans the entire downstream ledger.
+   - **3-Node Byzantine Consensus Telemetry**: Real-time streaming logs from **Node Alpha (AML/Fraud)**, **Node Beta (Merkle Cryptographer)**, and **Node Gamma (PoW Consensus)**, with 1-click **Cryptographic Self-Healing**.
 7. **Zero-Knowledge (ZK) Expense Proof Generator & Independent Verifier**:
    - Generates privacy-preserving salted cryptographic commitments: $C = \text{SHA256}(\text{Amount} \parallel \text{Ceiling} \parallel \text{Salt})$.
    - Proves budget compliance to auditors/employers without revealing merchant identities, account numbers, or exact spend balances.

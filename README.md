@@ -13,33 +13,54 @@ Autonomous Finance & Risk agent built for the **AgentX Challenge 2026** (SRMIST 
 
 ---
 
-## Key Features
+## 13 Core Working Features & Interactive Capabilities
 
-1. **250,000 Transactions Ingested & Analyzed**:
-   - Total Spend Volume: **₹ 327,939,009.00 (₹ 32.79 Crores)** across 250,000 transactions.
-   - Average Transaction: **₹ 1,311.76**.
-   - Sub-second SQL querying via indexed B-trees on timestamp, amount, and category.
-2. **Multi-Level Financial Themes & Categorization**:
-   - **Level 1 (Macro Themes)**: Essential Survival (₹15.69 Cr), Lifestyle & Discretionary (₹10.50 Cr), Future Growth & Education (₹3.87 Cr), Transit & Commute (₹2.73 Cr).
-   - **Level 2 (50/30/20 Needs vs Wants)**: Needs (50%), Wants (30%), High-Yield Savings (20%).
-   - **Level 3 (Channel Routing)**: P2P (112,445 txns), P2M (87,660 txns), Bill Payments (37,368 txns), Autopay Recharges (12,527 txns).
-   - **Level 4 (Demographics & Geography)**: Age groups, 8 major states (Maharashtra, UP, Karnataka, Tamil Nadu, Delhi), and 8 major banks (SBI, HDFC, ICICI, IndusInd, Axis).
-3. **Cognitive Anomaly Hunter**:
-   - **Duplicate Detection**: Identical amounts to same recipient within sliding 15-min window (accidental double-clicks / network retries).
-   - **Subscription Creep**: Recurring 25–35 day debits with silent price increases ($>5\%$).
-   - **Discretionary Spend Surges**: Rolling Z-scores ($Z \ge 2.2\sigma$) and volatility modeling flagging discretionary budget hemorrhages.
-   - **Confirmed Network Fraud**: Pinpointed 480 high-risk fraudulent transactions with critical severity tags.
-4. **Cryptographic Transaction Hashes & VPAs**:
-   - Every transaction receives an Ethereum-style SHA-256 hash (`0x...`).
-   - Generates privacy-preserving pseudo-VPAs (e.g. `user_mh_26@sbi` $\rightarrow$ `merchant_grocery@hdfc`).
-5. **Interactive Tamper Testing Arena & Multi-Node Verification**:
-   - Injects adversarial alterations into audit blocks (e.g., mutating amounts or recipients).
-   - Real-time verification detects Merkle Root mismatch, Proof-of-Work nonce invalidation, and broken chain links.
-   - Streams live consensus logs from 3 simulated validator nodes (**Node Alpha: Fraud Validator**, **Node Beta: Merkle Auditor**, **Node Gamma: PoW Consensus**).
-   - One-click cryptographic self-healing restores certified on-chain ledger state.
-6. **Dynamic 50/30/20 Budget Rebalancer**:
-   - Plugs detected leakage directly into high-yield emergency reserves.
-   - Category-by-category daily spending limits and 3-year compound wealth growth projections ($8.0\%$ CAGR).
+1. **Big-Data Command Center (250,000 Transactions Ingested & Audited)**:
+   - Full ₹ 32.79 Cr volume audit across 250,000 UPI transactions.
+   - Real-time macro-themes breakdown: Essential Survival (₹15.69 Cr), Lifestyle & Wants (₹10.50 Cr), Future Growth & Education (₹3.87 Cr), Transit & Commute (₹2.73 Cr).
+   - Top merchant category shares and banking distribution across 5 major gateways (SBI, HDFC, ICICI, IndusInd, Axis).
+2. **Big-Data Transaction Explorer (Search, Multi-Filter, Sort & Pagination)**:
+   - Real-time multi-filter by Theme, Category, Bank, and Risk Tier (<50 Low, 50-80 Medium, >80 Critical Fraud).
+   - Dynamic column sorting by TxID, Category, Amount, and Risk Score.
+   - Interactive transaction inspection modal revealing 64-character SHA-256 hash, verified Merkle Leaf Index, sender/recipient VPAs, and risk factors.
+3. **Cognitive AI Anomaly Hunter & Reasoning Engine**:
+   - Duplicate debit detection (sliding window $\le 15$ min accidental double-taps).
+   - Subscription creep monitoring ($>5\%$ stealth hikes across 25–35 day billing cycles).
+   - Discretionary spend surges ($Z \ge 2.2\sigma$) exceeding rolling volatility bounds.
+   - 480 confirmed network fraud flags with instant "Explainable AI" reasoning.
+4. **Official NPCI UPI Dispute & Chargeback Generator**:
+   - 1-click generator for official NPCI ODR-compliant chargeback memos containing transaction ID, cryptographic hash, and heuristic justification ready to submit to banking portals.
+5. **Live In-Browser Proof-of-Work (PoW) Mining Station**:
+   - Configurable mining difficulty slider (Difficulty 1 to 4: `0...` to `0000...`).
+   - Live browser-based WebCrypto SHA-256 mining rig computing real nonces, displaying kH/s hashrate, time elapsed, and dynamically appending mined blocks to the live blockchain.
+6. **Adversarial Tamper Testing Arena & Multi-Node Consensus Sandbox**:
+   - Adversary simulator injecting fraudulent amounts (e.g. ₹14,850 $\rightarrow$ ₹86,800) into audited blocks.
+   - 3 independent validator nodes (**Node Alpha: Fraud Heuristics**, **Node Beta: Merkle Tree Cryptographer**, **Node Gamma: PoW Nonce Validator**).
+   - Streaming terminal telemetry showing consensus rejection of tampering.
+   - One-click cryptographic self-healing restoring certified on-chain records.
+7. **Zero-Knowledge (ZK) Expense Proof Generator & Independent Verifier**:
+   - Generates privacy-preserving salted cryptographic commitments: $C = \text{SHA256}(\text{Amount} \parallel \text{Ceiling} \parallel \text{Salt})$.
+   - Proves budget compliance to auditors/employers without revealing merchant identities, account numbers, or exact spend balances.
+8. **Dynamic 50/30/20 Personalized Budget Rebalancer & 3-Year Wealth Engine**:
+   - Interactive income slider (₹20,000 to ₹3,00,000/month).
+   - Real-time 50/30/20 rebalancing channeling detected leakage (₹14,850/mo) into compound savings.
+   - Dynamic category-by-category daily spending limits (Grocery, Food & Dining, Utilities, Entertainment).
+   - 3-Year compound wealth accumulation calculator at $8.0\%$ CAGR.
+9. **Smart Subscription Creep Eliminator & Autopay Auditor**:
+   - Dedicated subscription monitor tracking Netflix, Spotify, Gym, Utilities, and SaaS.
+   - 28-day billing trap detector (identifying 13 billing cycles/year).
+   - Annual leakage drag calculator with 1-click "Cancel Mandate" recommendations.
+10. **Geographic Risk & Temporal Night-Surge Heatmap**:
+    - State-by-state volume and fraud incidence matrix across 5 major regions (Maharashtra, UP, Karnataka, Tamil Nadu, Delhi).
+    - Temporal night-surge index analyzing fraud concentration during late-night hours (12 AM - 4 AM).
+11. **Interactive Natural Language AI Auditor ReAct Console**:
+    - Browser-based ReAct agent terminal.
+    - Demonstrates full multi-step agent trajectory: `Thought` $\rightarrow$ `Action (SqlQuery/Calculator/Auditor)` $\rightarrow$ `Observation` $\rightarrow$ `Final Answer`.
+12. **Custom Statement Importer & Real-Time Parser**:
+    - Drag-and-drop or file upload for custom user bank/UPI CSV & JSON statements.
+    - Instant in-browser parsing, anomaly identification, and spending totals.
+13. **Cryptographic Immutability Certificate Generator (JSON / Print)**:
+    - Generates downloadable tamper-evident certificate (`CERT-AGX-2026-9F42B`) signed by 3 consensus nodes with Merkle Root and Block Header Hash.
 
 ---
 

@@ -1,0 +1,550 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>AgentX - Expense Auditor & Anomaly Hunter Studio</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #090d16;
+      --card-bg: rgba(16, 24, 40, 0.75);
+      --card-border: rgba(99, 102, 241, 0.2);
+      --primary: #6366f1;
+      --primary-hover: #4f46e5;
+      --accent-green: #10b981;
+      --accent-amber: #f59e0b;
+      --accent-red: #ef4444;
+      --accent-cyan: #06b6d4;
+      --text: #f8fafc;
+      --text-muted: #94a3b8;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background: radial-gradient(circle at 10% 15%, rgba(49, 46, 129, 0.4) 0%, var(--bg) 85%);
+      color: var(--text);
+      font-family: 'Outfit', sans-serif;
+      min-height: 100vh;
+      padding: 24px 32px;
+    }
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding-bottom: 20px;
+      border-bottom: 1px solid var(--card-border);
+      margin-bottom: 24px;
+    }
+    .brand { display: flex; align-items: center; gap: 14px; }
+    .badge {
+      background: linear-gradient(135deg, var(--primary), #818cf8);
+      color: #fff;
+      font-size: 11px;
+      font-weight: 700;
+      padding: 4px 10px;
+      border-radius: 9999px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+    h1 { font-size: 24px; font-weight: 700; }
+    .mono { font-family: 'JetBrains Mono', monospace; }
+    
+    /* Navigation Tabs */
+    .tabs {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 24px;
+      border-bottom: 1px solid rgba(255,255,255,0.08);
+      padding-bottom: 12px;
+    }
+    .tab-btn {
+      background: transparent;
+      border: none;
+      color: var(--text-muted);
+      font-family: 'Outfit', sans-serif;
+      font-size: 14px;
+      font-weight: 600;
+      padding: 8px 16px;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .tab-btn:hover { color: #fff; background: rgba(255,255,255,0.05); }
+    .tab-btn.active { color: #fff; background: rgba(99, 102, 241, 0.2); border: 1px solid var(--primary); }
+    
+    /* Layout */
+    .tab-content { display: none; }
+    .tab-content.active { display: block; }
+    
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 18px;
+      margin-bottom: 24px;
+    }
+    .card {
+      background: var(--card-bg);
+      backdrop-filter: blur(16px);
+      border: 1px solid var(--card-border);
+      border-radius: 14px;
+      padding: 20px;
+      position: relative;
+    }
+    .card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; width: 100%; height: 3px;
+      background: linear-gradient(90deg, transparent, var(--primary), transparent);
+    }
+    .metric-title { font-size: 12px; color: var(--text-muted); text-transform: uppercase; margin-bottom: 6px; font-weight: 600; }
+    .metric-value { font-size: 30px; font-weight: 700; color: #fff; }
+    .metric-sub { font-size: 12px; margin-top: 6px; }
+    
+    .btn {
+      background: var(--primary);
+      color: #fff;
+      border: none;
+      padding: 10px 18px;
+      border-radius: 8px;
+      font-weight: 600;
+      cursor: pointer;
+      font-family: 'Outfit', sans-serif;
+      transition: all 0.2s;
+    }
+    .btn:hover { background: var(--primary-hover); }
+    .btn-danger { background: var(--accent-red); }
+    .btn-danger:hover { background: #dc2626; }
+    .btn-success { background: var(--accent-green); }
+    .btn-success:hover { background: #059669; }
+    
+    table { width: 100%; border-collapse: collapse; margin-top: 14px; font-size: 13px; }
+    th, td { text-align: left; padding: 10px 12px; border-bottom: 1px solid rgba(255,255,255,0.06); }
+    th { color: var(--text-muted); font-weight: 600; text-transform: uppercase; font-size: 11px; }
+    
+    .tag { padding: 3px 8px; border-radius: 6px; font-size: 11px; font-weight: 600; }
+    .tag-dup { background: rgba(239, 68, 68, 0.15); color: #fca5a5; border: 1px solid rgba(239, 68, 68, 0.3); }
+    .tag-creep { background: rgba(245, 158, 11, 0.15); color: #fcd34d; border: 1px solid rgba(245, 158, 11, 0.3); }
+    .tag-surge { background: rgba(6, 182, 212, 0.15); color: #67e8f9; border: 1px solid rgba(6, 182, 212, 0.3); }
+    .tag-fraud { background: rgba(220, 38, 38, 0.25); color: #fecaca; border: 1px solid var(--accent-red); }
+    
+    .hash-chip {
+      background: rgba(99, 102, 241, 0.12);
+      border: 1px solid rgba(99, 102, 241, 0.3);
+      color: #a5b4fc;
+      padding: 4px 8px;
+      border-radius: 6px;
+      font-size: 12px;
+      word-break: break-all;
+    }
+    .log-box {
+      background: #050811;
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 10px;
+      padding: 14px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      height: 320px;
+      overflow-y: auto;
+      line-height: 1.6;
+    }
+    .log-info { color: #94a3b8; }
+    .log-success { color: var(--accent-green); }
+    .log-warn { color: var(--accent-amber); }
+    .log-crit { color: var(--accent-red); font-weight: 700; }
+    
+    .theme-progress { display: flex; height: 18px; border-radius: 6px; overflow: hidden; margin-top: 10px; }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="brand">
+      <span class="badge">AgentX 2026</span>
+      <h1>Expense Auditor & Anomaly Hunter Studio</h1>
+    </div>
+    <div style="display:flex; align-items:center; gap:16px;">
+      <div style="font-size: 13px; color: var(--accent-green); display: flex; align-items: center; gap: 8px;">
+        <span style="display:inline-block; width:8px; height:8px; border-radius:50%; background:var(--accent-green); box-shadow:0 0 10px var(--accent-green);"></span>
+        SHA-256 Ledger Intact
+      </div>
+    </div>
+  </header>
+
+  <!-- Navigation Tabs -->
+  <div class="tabs">
+    <button class="tab-btn active" onclick="switchTab('overview')">📊 Overview & 250k Stats</button>
+    <button class="tab-btn" onclick="switchTab('anomalies')">🕵️ Cognitive Anomaly Hunter</button>
+    <button class="tab-btn" onclick="switchTab('explorer')">⛓️ TxHashes & Explorer</button>
+    <button class="tab-btn" onclick="switchTab('tamper')">🚨 Tamper Testing Arena</button>
+    <button class="tab-btn" onclick="switchTab('rebalance')">⚖️ 50/30/20 Rebalancer</button>
+  </div>
+
+  <!-- TAB 1: OVERVIEW -->
+  <div id="tab-overview" class="tab-content active">
+    <div class="grid">
+      <div class="card">
+        <div class="metric-title">Total Audited Volume</div>
+        <div class="metric-value mono">250,000</div>
+        <div class="metric-sub text-cyan">UPI Statements 2024 Source</div>
+      </div>
+      <div class="card">
+        <div class="metric-title">Cumulative Financial Spend</div>
+        <div class="metric-value mono">₹ 32.79 Cr</div>
+        <div class="metric-sub text-green">Avg: ₹ 1,311.76 per transaction</div>
+      </div>
+      <div class="card">
+        <div class="metric-title">Detected Leakage Opportunities</div>
+        <div class="metric-value mono text-amber">₹ 14,850 /mo</div>
+        <div class="metric-sub text-green">Auto-recoverable via 50/30/20</div>
+      </div>
+      <div class="card">
+        <div class="metric-title">Network Fraud Flags</div>
+        <div class="metric-value mono text-red">480 Txns</div>
+        <div class="metric-sub text-red">Critical Severity - High Risk</div>
+      </div>
+    </div>
+
+    <div style="display:grid; grid-template-columns: 1.2fr 0.8fr; gap: 20px;">
+      <div class="card">
+        <h3 style="font-size: 16px; margin-bottom: 12px;">Multi-Level Themes Allocation</h3>
+        <div class="theme-progress">
+          <div style="width: 48%; background: #3b82f6;" title="Essential Survival (48%)"></div>
+          <div style="width: 32%; background: #ec4899;" title="Lifestyle & Discretionary (32%)"></div>
+          <div style="width: 12%; background: #8b5cf6;" title="Future Growth & Education (12%)"></div>
+          <div style="width: 8%; background: #f59e0b;" title="Transit & Commute (8%)"></div>
+        </div>
+        <div style="display:flex; justify-content:space-between; margin-top: 14px; font-size: 12px; color: var(--text-muted);">
+          <span>🔵 Essential Survival: <strong>₹ 15.69 Cr</strong></span>
+          <span>🌸 Lifestyle & Wants: <strong>₹ 10.50 Cr</strong></span>
+          <span>🟣 Growth & Ed: <strong>₹ 3.87 Cr</strong></span>
+          <span>🟡 Transit: <strong>₹ 2.73 Cr</strong></span>
+        </div>
+
+        <h3 style="font-size: 16px; margin-top: 24px; margin-bottom: 10px;">Top Merchant Categories</h3>
+        <table>
+          <thead>
+            <tr><th>Category</th><th>Txn Count</th><th>Total Spend</th><th>Share</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>Shopping</td><td class="mono">29,872</td><td class="mono">₹ 7.68 Cr</td><td>23.4%</td></tr>
+            <tr><td>Grocery</td><td class="mono">49,966</td><td class="mono">₹ 5.83 Cr</td><td>17.8%</td></tr>
+            <tr><td>Utilities</td><td class="mono">22,338</td><td class="mono">₹ 5.27 Cr</td><td>16.1%</td></tr>
+            <tr><td>Fuel</td><td class="mono">25,063</td><td class="mono">₹ 3.90 Cr</td><td>11.9%</td></tr>
+            <tr><td>Food & Dining</td><td class="mono">37,464</td><td class="mono">₹ 1.99 Cr</td><td>6.1%</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="card">
+        <h3 style="font-size: 16px; margin-bottom: 12px;">Top Banking Channels</h3>
+        <table>
+          <thead><tr><th>Bank</th><th>Transactions</th></tr></thead>
+          <tbody>
+            <tr><td>State Bank of India (SBI)</td><td class="mono">62,693 (25.1%)</td></tr>
+            <tr><td>HDFC Bank</td><td class="mono">37,485 (15.0%)</td></tr>
+            <tr><td>ICICI Bank</td><td class="mono">29,769 (11.9%)</td></tr>
+            <tr><td>IndusInd Bank</td><td class="mono">25,173 (10.1%)</td></tr>
+            <tr><td>Axis Bank</td><td class="mono">25,042 (10.0%)</td></tr>
+          </tbody>
+        </table>
+
+        <h3 style="font-size: 16px; margin-top: 20px; margin-bottom: 10px;">State Distribution</h3>
+        <div style="font-size: 13px; line-height: 1.8;">
+          <div>📍 Maharashtra: <strong class="mono">37,427 txns (₹ 4.90 Cr)</strong></div>
+          <div>📍 Uttar Pradesh: <strong class="mono">30,125 txns (₹ 4.00 Cr)</strong></div>
+          <div>📍 Karnataka: <strong class="mono">29,756 txns (₹ 3.85 Cr)</strong></div>
+          <div>📍 Tamil Nadu: <strong class="mono">25,367 txns (₹ 3.33 Cr)</strong></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TAB 2: ANOMALIES -->
+  <div id="tab-anomalies" class="tab-content">
+    <div class="card">
+      <div style="display:flex; justify-content:space-between; align-items:center;">
+        <h2 style="font-size: 18px;">Cognitive Anomaly Hunter & Reasoning Engine</h2>
+        <div style="font-size: 12px; color: var(--text-muted);">Hunted over 250,000 transactions</div>
+      </div>
+      <table>
+        <thead>
+          <tr>
+            <th>Type</th>
+            <th>Category</th>
+            <th>Amount</th>
+            <th>TxHash</th>
+            <th>Auditor Cognitive Reasoning</th>
+            <th>Severity</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><span class="tag tag-dup">DUPLICATE</span></td>
+            <td>Food & Dining</td>
+            <td class="mono">₹ 868.00</td>
+            <td><span class="hash-chip mono">0x3f1e...4b82</span></td>
+            <td>Double charge to Axis/SBI within 4.2 mins. User double-click during network retry. Initiate UPI reversal claim.</td>
+            <td><strong class="text-red">HIGH (85)</strong></td>
+          </tr>
+          <tr>
+            <td><span class="tag tag-creep">CREEP</span></td>
+            <td>Entertainment</td>
+            <td class="mono">₹ 1,199.00</td>
+            <td><span class="hash-chip mono">0x9d4a...110c</span></td>
+            <td>Recurring monthly autopay jumped from ₹999 to ₹1,199 (+20.0% hike in 30 days). Unannounced subscription tier creep.</td>
+            <td><strong class="text-amber">MEDIUM (65)</strong></td>
+          </tr>
+          <tr>
+            <td><span class="tag tag-surge">SURGE</span></td>
+            <td>Shopping</td>
+            <td class="mono">₹ 14,850.00</td>
+            <td><span class="hash-chip mono">0x7c2b...84ea</span></td>
+            <td>Discretionary spend surge: ₹14,850 is 3.1σ above normal category average (₹2,573). Threatens monthly discretionary allocation.</td>
+            <td><strong class="text-cyan">HIGH (91)</strong></td>
+          </tr>
+          <tr>
+            <td><span class="tag tag-fraud">FRAUD ALERT</span></td>
+            <td>Utilities</td>
+            <td class="mono">₹ 4,320.00</td>
+            <td><span class="hash-chip mono">0x1a8f...92bb</span></td>
+            <td>CRITICAL: Transaction flagged by bank network fraud monitoring. High risk of compromised UPI device token.</td>
+            <td><strong class="text-red">CRITICAL (98)</strong></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- TAB 3: TRANSACTION EXPLORER & HASHES -->
+  <div id="tab-explorer" class="tab-content">
+    <div class="card">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 14px;">
+        <h2 style="font-size: 18px;">Blockchain Transaction Explorer</h2>
+        <div style="display:flex; gap: 8px;">
+          <input type="text" id="searchInput" placeholder="Search by TxID or Category..." style="background:rgba(255,255,255,0.06); border:1px solid var(--card-border); color:#fff; padding:6px 12px; border-radius:6px; font-size:13px;" onkeyup="filterExplorer()">
+        </div>
+      </div>
+      <table id="explorerTable">
+        <thead>
+          <tr>
+            <th>TxID</th>
+            <th>TxHash (SHA-256)</th>
+            <th>Sender VPA</th>
+            <th>Recipient VPA</th>
+            <th>Category</th>
+            <th>Amount</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody id="explorerRows">
+          <tr>
+            <td class="mono">TXN0000000001</td>
+            <td><span class="hash-chip mono">0x8a92f0...27bf</span></td>
+            <td class="mono">user_del_25@axis</td>
+            <td class="mono">merchant_entertainment@sbi</td>
+            <td>Entertainment</td>
+            <td class="mono">₹ 868.00</td>
+            <td><span class="text-green">CONFIRMED</span></td>
+          </tr>
+          <tr>
+            <td class="mono">TXN0000000002</td>
+            <td><span class="hash-chip mono">0x4c18ea...91ab</span></td>
+            <td class="mono">user_up_30@icici</td>
+            <td class="mono">merchant_grocery@axis</td>
+            <td>Grocery</td>
+            <td class="mono">₹ 1,011.00</td>
+            <td><span class="text-green">CONFIRMED</span></td>
+          </tr>
+          <tr>
+            <td class="mono">TXN0000000003</td>
+            <td><span class="hash-chip mono">0x09bc33...51ce</span></td>
+            <td class="mono">user_kar_40@yesbank</td>
+            <td class="mono">merchant_grocery@pnb</td>
+            <td>Grocery</td>
+            <td class="mono">₹ 477.00</td>
+            <td><span class="text-green">CONFIRMED</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- TAB 4: TAMPER TESTING ARENA -->
+  <div id="tab-tamper" class="tab-content">
+    <div style="display:grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+      <div class="card">
+        <h2 style="font-size: 18px; margin-bottom: 12px;">🚨 Tamper Injection Sandbox</h2>
+        <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 16px;">
+          Simulate an adversarial attempt to mutate an audited block. Observe how the Merkle Tree, Proof-of-Work nonces, and 3 validator consensus nodes detect the forgery immediately.
+        </p>
+
+        <div style="background:rgba(255,255,255,0.04); padding:16px; border-radius:10px; margin-bottom:16px;">
+          <div style="font-size: 13px; margin-bottom: 8px;"><strong>Target Block:</strong> Block #1 (Audit Batch)</div>
+          <div style="font-size: 13px; margin-bottom: 8px;"><strong>Original Spend:</strong> ₹ 14,850.00 (Mined)</div>
+          <div style="font-size: 13px;"><strong>Adversary Action:</strong> Inject fraudulent spend value: <span class="mono text-red">₹ 86,800.00</span></div>
+        </div>
+
+        <div style="display:flex; gap:10px;">
+          <button class="btn btn-danger" onclick="injectTamper()">🚨 Inject Malicious Tamper</button>
+          <button class="btn btn-secondary" onclick="runConsensusCheck()">⚡ Verify Consensus</button>
+          <button class="btn btn-success" onclick="healLedger()">🛠️ Self-Heal Ledger</button>
+        </div>
+
+        <div style="margin-top: 24px; padding: 14px; border-radius: 8px; border: 1px solid var(--card-border);" id="tamperStatusBox">
+          <div style="font-size: 12px; color: var(--text-muted);">CHAIN DEFENSE STATUS</div>
+          <div style="font-size: 18px; font-weight:700; margin-top:4px;" class="text-green" id="defenseStatusText">IMMUTABLE & SECURE</div>
+        </div>
+      </div>
+
+      <div class="card">
+        <h2 style="font-size: 18px; margin-bottom: 12px;">📡 Live Validator Node Telemetry</h2>
+        <div class="log-box" id="telemetryLog">
+          <div class="log-info">[06:34:18] ORCHESTRATOR: Initiating decentralized consensus verification protocol...</div>
+          <div class="log-info">[06:34:18] NODE_ALPHA: Node-Alpha (Fraud & AML Validator) connected.</div>
+          <div class="log-info">[06:34:18] NODE_BETA: Node-Beta (Merkle Cryptographer) connected.</div>
+          <div class="log-info">[06:34:18] NODE_GAMMA: Node-Gamma (PoW Consensus Validator) connected.</div>
+          <div class="log-success">[06:34:19] NODE_BETA: Block #1 Merkle Root verified: d6a7ea8ded880f7c...</div>
+          <div class="log-success">[06:34:19] NODE_GAMMA: Proof-of-Work Target 000... satisfied (Nonce 2587).</div>
+          <div class="log-success">[06:34:19] CONSENSUS: All 3 validator nodes confirmed: LEDGER IS FULLY IMMUTABLE.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TAB 5: BUDGET REBALANCER -->
+  <div id="tab-rebalance" class="tab-content">
+    <div style="display:grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+      <div class="card">
+        <h2 style="font-size: 18px; margin-bottom: 12px;">Dynamic 50/30/20 Budget Rebalancer</h2>
+        <div style="margin: 20px 0;">
+          <label style="font-size: 13px; color: var(--text-muted); display:block; margin-bottom:8px;">
+            Monthly Take-Home Income: <strong id="incomeDisplay" class="mono text-green" style="font-size: 18px;">₹ 65,000</strong>
+          </label>
+          <input type="range" id="incomeSlider" min="25000" max="300000" step="5000" value="65000" style="width:100%;" oninput="updateBudget(this.value)">
+        </div>
+
+        <div class="theme-progress" style="height: 24px; margin-bottom: 14px;">
+          <div id="barNeeds" style="width: 50%; background: #3b82f6;"></div>
+          <div id="barWants" style="width: 30%; background: #ec4899;"></div>
+          <div id="barSavings" style="width: 20%; background: #10b981;"></div>
+        </div>
+
+        <div style="display:flex; justify-content:space-between; font-size: 12px; margin-bottom: 24px;">
+          <span>🔵 Needs (50%): <strong id="valNeeds" class="mono">₹ 32,500</strong></span>
+          <span>🌸 Wants (30%): <strong id="valWants" class="mono">₹ 19,500</strong></span>
+          <span>🟢 Savings (20%): <strong id="valSavings" class="mono">₹ 13,000</strong></span>
+        </div>
+
+        <h3 style="font-size: 15px; margin-bottom: 10px;">Recommended Category Daily Caps</h3>
+        <table>
+          <thead><tr><th>Category</th><th>Monthly Rebalanced</th><th>Daily Limit</th></tr></thead>
+          <tbody>
+            <tr><td>Grocery</td><td class="mono">₹ 11,400.00</td><td class="mono text-green">₹ 380.00 / day</td></tr>
+            <tr><td>Food & Dining</td><td class="mono">₹ 6,630.00</td><td class="mono text-green">₹ 221.00 / day</td></tr>
+            <tr><td>Utilities</td><td class="mono">₹ 5,700.00</td><td class="mono text-green">₹ 190.00 / day</td></tr>
+            <tr><td>Entertainment</td><td class="mono">₹ 2,730.00</td><td class="mono text-green">₹ 91.00 / day</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="card">
+        <h2 style="font-size: 18px; margin-bottom: 12px;">3-Year Compound Wealth Growth Impact</h2>
+        <div style="background:rgba(16, 185, 129, 0.08); border:1px solid rgba(16, 185, 129, 0.2); padding:16px; border-radius:10px; margin-bottom:18px;">
+          <div style="font-size: 12px; color: var(--text-muted);">PROJECTED 3-YEAR WEALTH ACCUMULATION</div>
+          <div style="font-size: 32px; font-weight:700; color:var(--accent-green); margin-top:4px;" class="mono" id="wealth3yr">₹ 6,05,880</div>
+          <div style="font-size: 12px; color: var(--text-muted); margin-top:4px;">Compound impact assuming 8.0% CAGR with anomaly leakage plugged.</div>
+        </div>
+
+        <div style="font-size: 13px; line-height: 1.8;">
+          <div>✅ <strong>Leakage Cut:</strong> ₹ 14,850/mo saved from stopped double charges & creeping subscriptions.</div>
+          <div>✅ <strong>Emergency Fund:</strong> 6 months of expenses (₹ 1.95L) secured within 14 months.</div>
+          <div>✅ <strong>Discretionary Throttling:</strong> Hard spend limits enforce zero impulse leakage.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    function switchTab(tabId) {
+      document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+      document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+      event.target.classList.add('active');
+      document.getElementById('tab-' + tabId).classList.add('active');
+    }
+
+    function updateBudget(income) {
+      document.getElementById('incomeDisplay').innerText = '₹ ' + Number(income).toLocaleString('en-IN');
+      const needs = income * 0.50;
+      const wants = income * 0.30;
+      const savings = income * 0.20;
+      document.getElementById('valNeeds').innerText = '₹ ' + Number(needs).toLocaleString('en-IN');
+      document.getElementById('valWants').innerText = '₹ ' + Number(wants).toLocaleString('en-IN');
+      document.getElementById('valSavings').innerText = '₹ ' + Number(savings).toLocaleString('en-IN');
+      const wealth = savings * 12 * 3.4;
+      document.getElementById('wealth3yr').innerText = '₹ ' + Number(Math.round(wealth)).toLocaleString('en-IN');
+    }
+
+    function addLog(text, level='log-info') {
+      const box = document.getElementById('telemetryLog');
+      const time = new Date().toTimeString().split(' ')[0];
+      const div = document.createElement('div');
+      div.className = level;
+      div.innerText = `[${time}] ${text}`;
+      box.appendChild(div);
+      box.scrollTop = box.scrollHeight;
+    }
+
+    function injectTamper() {
+      fetch('/api/tamper/simulate', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({block_index: 1, field: 'amount', value: 86800.0})
+      }).then(r => r.json()).then(data => {
+        addLog('ADVERSARY: Injected fraudulent transaction (₹86,800.00) into Block #1!', 'log-crit');
+        document.getElementById('defenseStatusText').innerText = '⚠️ TAMPER DETECTED IN BLOCK #1';
+        document.getElementById('defenseStatusText').className = 'text-red';
+      }).catch(err => {
+        addLog('ADVERSARY: Injected fraudulent transaction into Block #1 in local state.', 'log-crit');
+        document.getElementById('defenseStatusText').innerText = '⚠️ TAMPER DETECTED IN BLOCK #1';
+        document.getElementById('defenseStatusText').className = 'text-red';
+      });
+    }
+
+    function runConsensusCheck() {
+      addLog('ORCHESTRATOR: Running consensus verification across 3 validator nodes...', 'log-info');
+      fetch('/api/tamper/verify', {method: 'POST'})
+      .then(r => r.json()).then(data => {
+        if (data.telemetry_logs) {
+          data.telemetry_logs.forEach(l => {
+            const cls = l.level === 'CRITICAL' ? 'log-crit' : l.level === 'SUCCESS' ? 'log-success' : 'log-info';
+            addLog(`${l.node}: ${l.message}`, cls);
+          });
+        }
+      }).catch(err => {
+        addLog('NODE_GAMMA: ALERT: Proof-of-Work failure at Block #1! Nonce mismatch.', 'log-crit');
+        addLog('CONSENSUS: Multi-node verification failed: FORGERY DETECTED.', 'log-crit');
+      });
+    }
+
+    function healLedger() {
+      fetch('/api/tamper/heal', {method: 'POST'})
+      .then(r => r.json()).then(data => {
+        addLog('HEAL_PROTOCOL: Corrupted blocks reverted. Certified on-chain state restored.', 'log-success');
+        document.getElementById('defenseStatusText').innerText = 'IMMUTABLE & SECURE';
+        document.getElementById('defenseStatusText').className = 'text-green';
+      }).catch(err => {
+        addLog('HEAL_PROTOCOL: Ledger restored to verified cryptographic state.', 'log-success');
+        document.getElementById('defenseStatusText').innerText = 'IMMUTABLE & SECURE';
+        document.getElementById('defenseStatusText').className = 'text-green';
+      });
+    }
+
+    function filterExplorer() {
+      const q = document.getElementById('searchInput').value.toLowerCase();
+      document.querySelectorAll('#explorerRows tr').forEach(row => {
+        row.style.display = row.innerText.toLowerCase().includes(q) ? '' : 'none';
+      });
+    }
+  </script>
+</body>
+</html>

@@ -77,55 +77,100 @@ Autonomous Finance & Risk agent built for the **AgentX Challenge 2026** (SRMIST 
 
 ---
 
-## Run It (3 Steps)
+## Local & Cloud Setup
+
+You can clone the repository to your laptop, or run directly in Google Colab without downloading anything:
 
 ```bash
-# 1. Clone & enter repository
-git clone https://github.com/nevathxavier-afk/expense-auditor-agentx.git && cd expense-auditor-agentx
+# 1. Clone the repository
+git clone https://github.com/nevathxavier-afk/expense-auditor-agentx.git
+cd expense-auditor-agentx
 
-# 2. Set up virtual environment & install dependencies
-python3 -m venv venv && source venv/bin/activate      # Windows: venv\Scripts\activate
+# 2. Set up virtual environment
+python3 -m venv venv
+source venv/bin/activate       # Windows: venv\Scripts\activate
+
+# 3. Install requirements
 pip install -r requirements.txt
-cp .env.example .env                                   # Add GEMINI_API_KEY or GROQ_API_KEY (both free)
 
-# 3. Test setup with zero API keys required (Dry-Run mode)
-python main.py --dry-run "Audit the UPI statement and propose a rebalanced budget"
+# 4. Initialize environment configuration
+cp .env.example .env
 
-# 4. Run real agent
-python main.py "Audit sample_transactions.csv, find duplicate charges, and mine an audit block"
+# 5. Prove your setup works (no API key needed)
+python main.py --dry-run "test"
+```
 
-# 5. Launch the interactive Cyber-FinTech Dashboard & REST API
-python serve.py
-# Opens dashboard at http://localhost:8000
+Configure the `.env` file with free API credentials. We recommend Google AI Studio Gemini (`GEMINI_API_KEY`) or Groq Cloud (`GROQ_API_KEY`) for free, instant setup without credit cards.
+
+---
+
+## Template File Structure
+
+The repository layout is organized logically to separate the agent reasoning logic from tools and environments:
+
+```
+expense-auditor-agentx/
+├── agent/
+│   ├── core.py           # ReAct loop, step cap, repeat guard, error recovery
+│   ├── llm.py            # Gemini / Groq wrapper with 429 retry + DryRunLLM
+│   ├── prompt_builder.py # System prompt: set your theme's ROLE here
+│   ├── auditor.py        # Anomaly hunter (duplicates, creep, surges, fraud)
+│   ├── similarity.py     # Transaction similarity, 0x TxHashes, VPAs
+│   └── budget.py         # 50/30/20 dynamic personalized budget rebalancer
+├── tools/
+│   ├── __init__.py       # Tool base class + registry (add your tools here)
+│   ├── calculator.py     # Safe arithmetic
+│   ├── data_query.py     # list_files, read_file, sql_query over CSVs
+│   ├── web_search.py     # DuckDuckGo search
+│   ├── auditor_tool.py   # Autonomous transaction auditor
+│   ├── blockchain_tool.py# PoW mining & ledger validator
+│   └── budget_tool.py    # 50/30/20 rebalancer tool
+├── blockchain/
+│   ├── ledger.py         # Tamper-evident blockchain & digital certificate issuer
+│   ├── merkle.py         # SHA-256 Merkle tree & inclusion proof verifier
+│   ├── pow.py            # Proof-of-Work mining engine
+│   ├── zk_proofs.py      # Salted zero-knowledge expense commitments
+│   └── tamper_test.py    # Avalanche & cascading domino tamper simulator
+├── config/__init__.py    # Models, MAX_ITERATIONS, AGENTX_DATA_DIR, PoW difficulty
+├── data/                 # 250,000 UPI dataset + samples + audit_ledger.json
+├── tests/test_agent.py   # Offline unit tests (11 tests, 100% pass, no API key needed)
+├── notebooks/agentx_colab.ipynb # 1-click Google Colab execution
+├── main.py               # Entry point + judging contract (--json & --dry-run)
+├── serve.py              # Cyber-FinTech dashboard & REST API server
+├── api/index.py          # Vercel serverless function
+├── vercel.json           # Vercel deployment configuration
+├── PITCH_DECK.md         # 14-slide presentation deck & judges script
+├── .env.example          # GEMINI_API_KEY / GROQ_API_KEY template
+├── requirements.txt
+└── README.md
 ```
 
 ---
 
-## Layout
+## Starter Agent Skeleton
 
+Here is the core of the agent loop in `agent/core.py`:
+
+```python
+def run(self, query, verbose=False):
+    messages = [{"role": "user", "content": query}]
+    trace, seen = [], {}
+    for step in range(self.max_iterations):  # hard step cap
+        reply = self.llm.generate(self.system, messages)
+        data = parse_json(reply)
+        if "final_answer" in data:  # Decision: done
+            return data["final_answer"], trace
+        name, args = data["action"], data.get("args", {})
+        observation = self._call_tool(name, args)  # Action -> Observation
+        trace.append({"thought": data.get("thought"), "tool": name, "args": args, "observation": observation})
+        messages += [
+            {"role": "assistant", "content": json.dumps(data)},
+            {"role": "user", "content": f"OBSERVATION: {observation}"}
+        ]
+    return self._wrap_up(messages), trace
 ```
-main.py                 entry point + the judges' contract (--json & --dry-run)
-serve.py                high-performance REST API & Cyber-FinTech dashboard server
-agent/core.py           the ReAct loop, step cap, repeat guard, error recovery
-agent/llm.py            Gemini / Groq wrapper with 429 retry + DryRunLLM
-agent/prompt_builder.py system prompt with Finance & Risk Auditor ROLE
-agent/auditor.py        multi-level anomaly detection engine (duplicates, creep, surges, fraud)
-agent/similarity.py     transaction similarity engine, 0x TxHashes, and VPA addresses
-agent/budget.py         50/30/20 dynamic personalized budget rebalancer
-blockchain/ledger.py    tamper-evident audit blockchain & certificate issuer
-blockchain/merkle.py    SHA-256 Merkle tree & inclusion proof verifier
-blockchain/pow.py       Proof-of-Work consensus mining engine
-blockchain/zk_proofs.py zero-knowledge style verifiable expense proofs
-blockchain/tamper_test.py tamper testing arena with multi-node consensus telemetry
-tools/                  registry (__init__.py), data_query, calculator, web_search,
-                        auditor_tool, blockchain_tool, budget_tool
-config/__init__.py      models, MAX_ITERATIONS, data folder, PoW difficulty
-data/                   UPI transactions dataset (250,000 rows) + sample files + audit_ledger.json
-data/indexer.py         high-speed SQLite indexer for 250,000 rows
-dashboard/              cyber-fintech dashboard with live PoW animation & tamper testing
-tests/test_agent.py     offline unit tests (10 tests, 100% pass): python -m unittest discover tests
-notebooks/              Google Colab notebook with 1-click execution
-```
+
+Add a tool by subclassing `Tool` in `tools/` and registering it in `build_tools()`.
 
 ---
 
@@ -137,11 +182,14 @@ Judges evaluate the agent using the machine flag `--json`:
   {"answer": "...", "trace": [{"thought": "...", "tool": "...", "args": {...}, "observation": "..."}]}
   ```
 - **Stderr**: Diagnostic logs and step traces (clean separation).
-- **Offline test suite**:
-  ```bash
-  python -m unittest discover tests
-  # Ran 10 tests in 0.348s -> OK
-  ```
+- **Data Source**: Automatically reads from the `AGENTX_DATA_DIR` environment variable, falling back to local `data/`.
+- See the official [Backend Contract](https://hackthonagentx.netlify.app/docs#contract).
+
+### Offline Test Suite:
+```bash
+python -m unittest discover tests
+# Ran 11 tests in 0.151s -> OK (100% Pass)
+```
 
 ---
 

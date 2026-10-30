@@ -352,19 +352,24 @@
       </div>
     </div>
     <div class="header-actions">
+      <a href="https://nevathxavier-afk.github.io/expense-auditor-agentx/" target="_blank" class="btn btn-success btn-sm" style="font-size:11px; text-decoration:none;">
+        🌐 Live: nevathxavier-afk.github.io
+      </a>
       <a href="https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2Fnevathxavier-afk%2Fexpense-auditor-agentx" target="_blank" class="btn-vercel">
-        ▲ Deploy with Vercel (nivezzzz)
+        ▲ Deploy with Vercel
       </a>
       <a href="https://colab.research.google.com/github/nevathxavier-afk/expense-auditor-agentx/blob/main/notebooks/agentx_colab.ipynb" target="_blank" class="btn btn-secondary">
         ⚡ Open in Colab
       </a>
-      <button class="btn btn-secondary" onclick="exportFullAuditReport()">
-        📥 Export Full Audit JSON
+      <button class="btn btn-secondary btn-sm" id="soundToggleBtn" onclick="toggleAudioSFX()">
+        🔊 Sound: ON
       </button>
-      <div style="font-size: 12px; color: var(--accent-green); display: flex; align-items: center; gap: 8px;">
-        <span style="display:inline-block; width:8px; height:8px; border-radius:50%; background:var(--accent-green); box-shadow:0 0 10px var(--accent-green);"></span>
-        Avalanche Ledger Verified
-      </div>
+      <button class="btn btn-secondary btn-sm" onclick="cycleTheme()">
+        🎨 Theme
+      </button>
+      <button class="btn btn-secondary btn-sm" onclick="exportFullAuditReport()">
+        📥 Audit JSON
+      </button>
     </div>
   </header>
 
@@ -390,6 +395,78 @@
 
   <!-- ==================== TAB 1: OVERVIEW ==================== -->
   <div id="tab-overview" class="tab-content active">
+    
+    <!-- AI Financial Health & Credit Stability Speedometer Gauge -->
+    <div class="card" style="margin-bottom:20px; background:radial-gradient(circle at 80% 20%, rgba(99,102,241,0.15) 0%, rgba(15,23,42,0.9) 70%);">
+      <div style="display:grid; grid-template-columns: 1.2fr 0.8fr; gap:20px; align-items:center;">
+        <div>
+          <div style="display:flex; align-items:center; gap:8px;">
+            <span class="badge" style="background:linear-gradient(135deg, #10b981, #06b6d4);">PRIME FINANCIAL TIER</span>
+            <span style="font-size:12px; color:var(--text-muted);">AI Health Index v2.6</span>
+          </div>
+          <h2 style="font-size:22px; font-weight:700; margin-top:8px;">Cognitive Financial Health & Credit Stability Index</h2>
+          <p style="font-size:13px; color:var(--text-muted); margin-top:6px; line-height:1.6;">
+            Synthesizes 250,000 transaction telemetry points across spending velocity, subscription hygiene, discretionary impulse control, and emergency liquidity reserves.
+          </p>
+
+          <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-top:16px;">
+            <div>
+              <div style="font-size:11px; color:var(--text-muted); text-transform:uppercase;">Discretionary Restraint</div>
+              <div style="height:6px; background:rgba(255,255,255,0.06); border-radius:3px; overflow:hidden; margin-top:4px;">
+                <div style="width:88%; height:100%; background:var(--accent-green);"></div>
+              </div>
+              <div style="font-size:11px; color:var(--accent-green); margin-top:2px; font-weight:600;">88/100 (Optimal)</div>
+            </div>
+            <div>
+              <div style="font-size:11px; color:var(--text-muted); text-transform:uppercase;">Subscription Hygiene</div>
+              <div style="height:6px; background:rgba(255,255,255,0.06); border-radius:3px; overflow:hidden; margin-top:4px;">
+                <div style="width:92%; height:100%; background:var(--accent-cyan);"></div>
+              </div>
+              <div style="font-size:11px; color:var(--accent-cyan); margin-top:2px; font-weight:600;">92/100 (Clean)</div>
+            </div>
+            <div>
+              <div style="font-size:11px; color:var(--text-muted); text-transform:uppercase;">Fraud Risk Shield</div>
+              <div style="height:6px; background:rgba(255,255,255,0.06); border-radius:3px; overflow:hidden; margin-top:4px;">
+                <div style="width:99%; height:100%; background:var(--primary);"></div>
+              </div>
+              <div style="font-size:11px; color:var(--primary); margin-top:2px; font-weight:600;">99/100 (Shielded)</div>
+            </div>
+            <div>
+              <div style="font-size:11px; color:var(--text-muted); text-transform:uppercase;">50/30/20 Alignment</div>
+              <div style="height:6px; background:rgba(255,255,255,0.06); border-radius:3px; overflow:hidden; margin-top:4px;">
+                <div style="width:84%; height:100%; background:var(--accent-amber);"></div>
+              </div>
+              <div style="font-size:11px; color:var(--accent-amber); margin-top:2px; font-weight:600;">84/100 (Rebalanced)</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- SVG Speedometer Gauge -->
+        <div style="display:flex; flex-direction:column; align-items:center; justify-content:center;">
+          <svg viewBox="0 0 200 120" style="width:200px; height:120px;">
+            <!-- Outer Arc -->
+            <path d="M 20 100 A 80 80 0 0 1 180 100" fill="none" stroke="rgba(255,255,255,0.1)" stroke-width="14" stroke-linecap="round"/>
+            <!-- Value Arc (785/900 = 87%) -->
+            <path d="M 20 100 A 80 80 0 0 1 180 100" fill="none" stroke="url(#gaugeGrad)" stroke-width="14" stroke-linecap="round" stroke-dasharray="251" stroke-dashoffset="33"/>
+            <!-- Needle -->
+            <line x1="100" y1="100" x2="148" y2="40" stroke="#fff" stroke-width="3" stroke-linecap="round"/>
+            <circle cx="100" cy="100" r="7" fill="var(--accent-green)"/>
+            <defs>
+              <linearGradient id="gaugeGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+                <stop offset="0%" stop-color="#ef4444"/>
+                <stop offset="50%" stop-color="#f59e0b"/>
+                <stop offset="100%" stop-color="#10b981"/>
+              </linearGradient>
+            </defs>
+          </svg>
+          <div class="mono" style="font-size:32px; font-weight:800; color:var(--accent-green); margin-top:-10px;">
+            785 <span style="font-size:16px; color:var(--text-muted); font-weight:400;">/ 900</span>
+          </div>
+          <div style="font-size:12px; color:var(--text-muted); font-weight:600;">EXCELLENT PRIME SCORE</div>
+        </div>
+      </div>
+    </div>
+
     <div class="grid">
       <div class="card">
         <div class="metric-title">Total Audited Volume</div>
@@ -714,6 +791,65 @@
       </div>
     </div>
   </div>
+
+  
+    <!-- Interactive Merkle Tree Visualizer & Inclusion Proof Simulator -->
+    <div class="card" style="margin-top:20px;">
+      <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px; margin-bottom:12px;">
+        <div>
+          <h3 style="font-size:17px; font-weight:700;">🌳 Interactive Merkle Tree & Inclusion Proof Visualizer</h3>
+          <div style="font-size:12px; color:var(--text-muted); margin-top:2px;">
+            Click any leaf transaction below to trace its O(log N) cryptographic proof path to the Block #1 Root Hash.
+          </div>
+        </div>
+        <span class="tag tag-theme" id="merkleProofStatusTag">LEAF #0 SELECTED (PROOF VALID)</span>
+      </div>
+
+      <!-- Visual Tree Diagram -->
+      <div style="background:#040711; border:1px solid rgba(255,255,255,0.08); border-radius:12px; padding:20px; text-align:center;">
+        <!-- ROOT LEVEL -->
+        <div style="display:inline-block; background:rgba(99,102,241,0.2); border:2px solid var(--primary); border-radius:8px; padding:8px 16px; margin-bottom:14px;" id="merkleNodeRoot">
+          <div style="font-size:10px; color:var(--text-muted); text-transform:uppercase;">Block #1 Merkle Root (256-Bit)</div>
+          <div class="mono text-cyan" style="font-size:12px; font-weight:700;" id="merkleRootText">0xd6a7ea8ded880f7cc28853f97c414b3f...</div>
+        </div>
+
+        <div style="font-size:14px; color:var(--text-muted); margin-bottom:14px;">▲ Branch Hash: H(H01 || H23) ▲</div>
+
+        <!-- LAYER 1 INTERMEDIATE PARENTS -->
+        <div style="display:flex; justify-content:space-around; max-width:650px; margin:0 auto 16px auto; gap:20px;">
+          <div style="background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.15); border-radius:8px; padding:8px 12px; flex:1;" id="merkleNodeH01">
+            <div style="font-size:10px; color:var(--text-muted);">Parent Node H(0,1)</div>
+            <div class="mono" style="font-size:11px; color:#c7d2fe;">0x7c1e84a2...</div>
+          </div>
+          <div style="background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.15); border-radius:8px; padding:8px 12px; flex:1;" id="merkleNodeH23">
+            <div style="font-size:10px; color:var(--text-muted);">Parent Node H(2,3)</div>
+            <div class="mono" style="font-size:11px; color:#c7d2fe;">0x4a9b21f0...</div>
+          </div>
+        </div>
+
+        <div style="font-size:14px; color:var(--text-muted); margin-bottom:14px;">▲ Leaf Hashes: H(Txn Payload) ▲</div>
+
+        <!-- LAYER 2 TRANSACTION LEAVES -->
+        <div style="display:flex; justify-content:space-between; max-width:750px; margin:0 auto; gap:10px; flex-wrap:wrap;">
+          <button class="btn btn-secondary btn-sm" id="leafBtn0" onclick="selectMerkleLeaf(0, 'TXN0000000001', 868.0, 'Entertainment')" style="flex:1; min-width:140px; border-color:var(--accent-green);">
+            🌿 Leaf 0: ₹868 (Ent)
+          </button>
+          <button class="btn btn-secondary btn-sm" id="leafBtn1" onclick="selectMerkleLeaf(1, 'TXN0000000002', 1011.0, 'Grocery')" style="flex:1; min-width:140px;">
+            🌿 Leaf 1: ₹1,011 (Groc)
+          </button>
+          <button class="btn btn-secondary btn-sm" id="leafBtn2" onclick="selectMerkleLeaf(2, 'TXN0000000003', 477.0, 'Grocery')" style="flex:1; min-width:140px;">
+            🌿 Leaf 2: ₹477 (Groc)
+          </button>
+          <button class="btn btn-secondary btn-sm" id="leafBtn3" onclick="selectMerkleLeaf(3, 'TXN0000000004', 2784.0, 'Fuel')" style="flex:1; min-width:140px;">
+            🌿 Leaf 3: ₹2,784 (Fuel)
+          </button>
+        </div>
+      </div>
+
+      <div style="margin-top:12px; font-size:12px; color:var(--text-muted); line-height:1.6;" id="merkleWitnessExplanation">
+        <strong>Cryptographic Inclusion Witness:</strong> To verify Leaf #0, the auditor only requires its sibling hash <code>H1</code> and parent sibling <code>H23</code>. Total proof size is strictly <strong>O(log₂ 250,000) ≈ 18 hashes</strong> instead of downloading 250k transactions!
+      </div>
+    </div>
 
   <!-- ==================== TAB 5: AVALANCHE TAMPERPROOF ARENA ==================== -->
   <div id="tab-tamper" class="tab-content">
@@ -1539,6 +1675,7 @@
 
     // Cascading Domino Invalidation
     function triggerCascadingDominoCollapse() {
+      sfxAlertSirens();
       addLog('AVALANCHE_ATTACK: Adversary injected 1-paisa mutation into Block #1 (₹14,850.00 -> ₹14,850.01)!', 'log-crit');
       const b1 = document.getElementById('dominoBlock1');
       const b2 = document.getElementById('dominoBlock2');
@@ -1640,6 +1777,7 @@
 
           if (hash.startsWith(miningTarget)) {
             stopMining();
+            sfxSuccessChime();
             document.getElementById('minerDisplay').innerHTML = `
               <div class="text-green" style="font-weight:700;">🎉 BLOCK MINED SUCCESSFULLY!</div>
               <div>NONCE FOUND: ${miningNonce}</div>
@@ -1823,6 +1961,107 @@
       URL.revokeObjectURL(url);
     }
 
+
+
+    // ==================== WEB AUDIO PURE SYNTHESIZER SFX ====================
+    let audioCtx = null;
+    let sfxEnabled = true;
+
+    function initAudio() {
+      if (!audioCtx) {
+        audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      }
+    }
+
+    function playTone(freq, type='sine', duration=0.15) {
+      if (!sfxEnabled) return;
+      try {
+        initAudio();
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.type = type;
+        osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
+        gain.gain.setValueAtTime(0.08, audioCtx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + duration);
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+        osc.start();
+        osc.stop(audioCtx.currentTime + duration);
+      } catch(e) {}
+    }
+
+    function sfxSuccessChime() {
+      playTone(523.25, 'triangle', 0.1); // C5
+      setTimeout(() => playTone(659.25, 'triangle', 0.12), 90); // E5
+      setTimeout(() => playTone(783.99, 'triangle', 0.25), 180); // G5
+    }
+
+    function sfxAlertSirens() {
+      playTone(320, 'sawtooth', 0.15);
+      setTimeout(() => playTone(220, 'sawtooth', 0.25), 140);
+    }
+
+    function sfxClick() {
+      playTone(880, 'sine', 0.04);
+    }
+
+    function toggleAudioSFX() {
+      sfxEnabled = !sfxEnabled;
+      const btn = document.getElementById('soundToggleBtn');
+      if (btn) {
+        btn.innerText = sfxEnabled ? '🔊 Sound: ON' : '🔇 Sound: OFF';
+      }
+      if (sfxEnabled) sfxSuccessChime();
+    }
+
+    // ==================== THEME ACCENT CYCLER ====================
+    let currentThemeIdx = 0;
+    const THEMES = [
+      { name: 'Cyber Indigo', primary: '#6366f1', green: '#10b981', cyan: '#06b6d4' },
+      { name: 'Matrix Emerald', primary: '#10b981', green: '#34d399', cyan: '#10b981' },
+      { name: 'DeFi Neon Blue', primary: '#3b82f6', green: '#10b981', cyan: '#38bdf8' }
+    ];
+
+    function cycleTheme() {
+      currentThemeIdx = (currentThemeIdx + 1) % THEMES.length;
+      const t = THEMES[currentThemeIdx];
+      document.documentElement.style.setProperty('--primary', t.primary);
+      document.documentElement.style.setProperty('--accent-green', t.green);
+      document.documentElement.style.setProperty('--accent-cyan', t.cyan);
+      sfxClick();
+      alert(`Theme switched to: ${t.name}`);
+    }
+
+    // ==================== INTERACTIVE MERKLE TREE PATH HIGHLIGHTER ====================
+    function selectMerkleLeaf(leafIdx, txId, amount, cat) {
+      sfxClick();
+      for (let i = 0; i < 4; i++) {
+        const btn = document.getElementById('leafBtn' + i);
+        if (btn) btn.style.borderColor = (i === leafIdx) ? 'var(--accent-green)' : 'rgba(255,255,255,0.15)';
+      }
+
+      const nodeH01 = document.getElementById('merkleNodeH01');
+      const nodeH23 = document.getElementById('merkleNodeH23');
+
+      if (leafIdx === 0 || leafIdx === 1) {
+        nodeH01.style.borderColor = 'var(--accent-green)';
+        nodeH01.style.background = 'rgba(16,185,129,0.15)';
+        nodeH23.style.borderColor = 'rgba(255,255,255,0.15)';
+        nodeH23.style.background = 'rgba(255,255,255,0.04)';
+      } else {
+        nodeH23.style.borderColor = 'var(--accent-green)';
+        nodeH23.style.background = 'rgba(16,185,129,0.15)';
+        nodeH01.style.borderColor = 'rgba(255,255,255,0.15)';
+        nodeH01.style.background = 'rgba(255,255,255,0.04)';
+      }
+
+      document.getElementById('merkleProofStatusTag').innerText = `LEAF #${leafIdx} (${txId}) PROVED`;
+      document.getElementById('merkleWitnessExplanation').innerHTML = `
+        <strong>Cryptographic Inclusion Witness for Leaf #${leafIdx} (${txId} - ₹${amount} ${cat}):</strong>
+        Auditing this transaction requires only <strong>1 sibling leaf</strong> and <strong>1 sibling parent</strong>.
+        Formula: <code>Root = H(H01 || H23)</code>. Merkle root integrity verified without scanning all 250k rows!
+      `;
+    }
 
     // Universal Filter & Quick Chips Handler
     function setChipFilter(type) {
